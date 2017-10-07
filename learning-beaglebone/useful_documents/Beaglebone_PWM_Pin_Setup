@@ -1,0 +1,87 @@
+//This guide is for version 4.11.1 of the Linux kernel, things may have changed if you are reading this whilst using a different kernel version
+
+//We will go through how to setup the EHRPWM1A(P9_14) pin as a PWM output and use
+it to control a servo motor using a c program
+
+//Follow these commands logged in as root or using sudo
+
+//**Include the dts file, BB-PWM1-00A0.dts for people to reference**
+
+//To begin, lets gather some information regarding the EHRPWM1A(P9_14) pin and from there we will,
+//move forward to making it a PWM output
+
+//To see the current pinmux mode of the EHRPWM1A(P9_14) pin, do the following
+cd /sys/kernel/debug/pinctrl/44e10800.pinmux/
+less pins | grep 848
+//Output is, pin 18 (PIN18) 44e10848 00000027 pinctrl-single 
+//The 00000027 is the hex number 0x27 or 00100111 in binary
+//Refferring to the three least significant bits we can see it is currently in pin mode 7
+//For this pin to be used as a PWM output we need it in pin Mode 6 or 0x06, 00000110 in binary
+//This cann be seen by reviewing the BB-PWM1-00A0.dts file included as looking at line 21: 
+//0x48 0x06 /* (U14) gpmc_a2.ehrpwm1A */
+//The 0x48 refers to the address of the pin(P9_14) and the 0x06 refers to the mode
+
+//Next is to load the compiled dts file to the cape manager of our BBB
+cd /lib/firmware
+ls BB-PWM*
+//Output: BB-PWM0-00A0.dtbo  BB-PWM1-00A0.dtbo  BB-PWM2-00A0.dtbo
+//You should now be able to see the three .dtbo files that control the six pwm output pins
+//I will be focusing on the EHRPWM1A(P9_14) and EHRPWM1B(P9_16) pins
+//The BB-PWM1-00A0.dtbo file controls the above mentioned pins, 
+//see the included dts file for more info
+
+//Type this to load the device tree overlay
+echo BB-PWM1 > /sys/devices/platform/bone_capemgr/slots
+//Next, make sure it has been loaded properly
+cat /sys/devices/platform/bone_capemgr/slots
+/* Output:
+0: PF----  -1 
+ 1: PF----  -1 
+ 2: PF----  -1 
+ 3: PF----  -1 
+ 4: P-O---  -1 Override Board Name,00A0,Override Manuf,BB-PWM1
+*/
+
+//Next we should confirm the current pinmux mode of our pin by repeating the previous steps
+cd /sys/kernel/debug/pinctrl/44e10800.pinmux/
+less pins | grep 848
+//Output: pin 18 (PIN18) 44e10848 00000006 pinctrl-single 
+//We can now see the mode is 0x06 and can now be used a PWM output
+
+//Finally, we can move to the directory that has been created by following the previous steps
+cd /sys/class/pwm/pwmchip0
+ls
+//Output: device	export	npwm  power  subsystem	uevent	unexport
+//We can now echo a number to the export file to create the directory for the PWM pins
+//(0 for EHRPWM1A (P9_14), 1 for EHRPWM1B (P9_16))
+echo 0 > export
+cd pwm-0\:0/
+ls
+//Output: capture  device  duty_cycle  enable  period  polarity  power  subsystem  uevent
+
+//We can now change the duty cycle, period, etc.
+
+//Lets give our P9_14 pin a period of 10 μS and a duty cycle of 50%
+echo 10000 > period
+echo 5000 > duty_cycle
+//These values are in nanoseconds, hence 100kHz signal is created
+echo 1 > enable
+
+
+**************************************************************************************
+//Servo Example (SG90 hobby servo)
+**************************************************************************************
+//The SG90 expects a pulse every 20 ms, this will be the period we give the PWM pin
+//Recall the numbers being echoed are in nanoseconds(10^-9)
+echo 20000000 > period
+//The next values are not absolute and can be different for each motor
+//These values are always slightly different for each motor I have used,
+//so play around with the values slightly until you get what you desire
+//To get the center position the SG90 expects a duty cycle of 1.85 ms
+echo 1850000 > duty_cycle
+//Rotate it to the left 90 degreees is 1 ms pulse
+echo 1000000 > duty_cycle
+//Roatating it to the right 90 degrees is a 2 ms pulse
+echo 2350000 > duty_cycle
+
+

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#This script allows you to pass specific arguments to change the state of the onboard USR3 LED
+
+LED3_PATH=/sys/class/leds/beaglebone:green:usr3
+
+function remove_trigger
+{
+	echo "none" >> "$LED3_PATH/trigger"
+}
+
+
+echo "Starting the LED Bash script"
+
+if [ $# -eq 0 ]; then
+	echo "You goofed the number of arguments. Pass ONE of these arguments:"
+	echo -e "\n1. on\n2. off\n3. flash\n4. status\nEx. bashLED flash"
+	exit 2
+fi
+
+echo "The LED Command passed is: $1"
+
+if [ "$1" == "on" ]; then
+	echo "Turning the LED on"
+	remove_trigger
+	echo "1" >> "$LED3_PATH/brightness"
+elif [ "$1" == "off" ]; then
+	echo "Turning the LED off"
+	remove_trigger
+	echo "0" >> "$LED3_PATH/brightness"
+elif [ "$1" == "flash" ]; then
+	echo "Flashing the LED"
+	remove_trigger
+	echo "timer" >> "$LED3_PATH/trigger"
+	echo "50" >> "$LED3_PATH/delay_on"
+	echo "50" >> "$LED3_PATH/delay_off"
+elif [ "$1" == "status" ]; then
+	cat "$LED3_PATH/trigger";
+fi
+
+echo "Peace out."

@@ -1,0 +1,50 @@
+/*This is a device tree source file, this must be compiled into a device tree
+ *blob object (.dtbo) file use the device tree compiler (dtc)
+*/
+
+/*Ex. of dtc: dtc -O dtb -o gpio_example-00A0.dtbo -b 0 -@ gpio_example.dts 
+ *Then copy the compiled .dtbo file into /lib/firmware
+*/
+
+/* IO options:
+ * OUTPUT GPIO(mode 7) 0x07 pulldown, 0x17 pullup, 0x?f no pullup/down
+ * INPUT  GPIO(mode 7) 0x27 pulldown, 0x37 pullup, 0x?f no pullup/down
+*/
+
+
+/dts-v1/;
+/plugin/;
+
+/{
+    compatible = "ti,beaglebone", "ti,beaglebone-black";
+
+    /*identification*/
+    part-number = "gpio-example";
+    version = "00A0";
+
+    fragment@0 {
+        target = <&am33xx_pinmux>;
+
+        __overlay__ {
+            gpio_example: GPIO_EXAMPLE {
+                pinctrl-single,pins = <
+                    0x070 0x07  /*P9_11 $28 GPIO0_30=30 Output Mode7 pulldown*/
+                    0x074 0x37  /*P9_13 $29 GPIO0_31=31 Input Mode7 pullup*/
+                >;
+            };
+        };
+    };
+
+    fragment@1 {
+        target = <&ocp>;
+
+        __overlay__ {
+            gpio_helper {
+                compatible = "gpio-of-helper";
+                status = "okay";
+                pinctrl-names = "default";
+                pinctrl-0 = <&gpio_example>;
+            };
+        };
+    };
+};
