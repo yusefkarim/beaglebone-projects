@@ -7,3 +7,5 @@ Ethernet port id: SS5-009
 Operating system: Arch Linux
 
 Reason: Student run project supervised by senior lab instructor
+
+CURRENT IP ADDRESS: 209.42.101.92
