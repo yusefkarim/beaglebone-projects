@@ -24,11 +24,6 @@
 ### **Final Goal**:
 I want to use the Beaglebone for robotics projects in the future.
 
-Possible idea is making an autonomous version of Rick's pass the butter robot from the TV show Rick and Morty.
-
-[This Guy](http://www.wausonline.com/wp-content/uploads/2015/09/butter.png)
-
-
 ## **Resources used**:
 
 - Exploring Beaglebone - Derek Molloy
