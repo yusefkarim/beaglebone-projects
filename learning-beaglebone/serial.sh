@@ -1,6 +1,7 @@
 #!/bin/bash
 
-#Press ctrl-a-d to detach communications
+# Press ctrl-a-d to detach communications
+# Press ctrl-a-\ to quit
 clear
 
 echo "Starting serial communications...."
