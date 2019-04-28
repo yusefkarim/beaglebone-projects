@@ -38,7 +38,9 @@ wget http://os.archlinuxarm.org/os/ArchLinuxARM-am33x-latest.tar.gz
 bsdtar -xpf ArchLinuxARM-am33x-latest.tar.gz -C mnt && sync
 ```
 
-Copy U-Boot to beginning of the SD card:
+Copy U-Boot to the SD card:
+    * Secondary Program Loader (MLO) goes at address 0x20000 (128 KiB)
+    * Second Stage Bootloader/U-Boot (u-boot.img) goes at 0x60000 (384 KiB)
 ```
 dd if=mnt/boot/MLO of=/dev/sdc count=1 seek=1 conv=notrunc bs=128k
 dd if=mnt/boot/u-boot.img of=/dev/sdc count=2 seek=1 conv=notrunc bs=384k
@@ -109,8 +111,7 @@ pacman -Syu
 pacman -S base-devel vim git
 ```
 
-Setting up wifi. I am using the tp-link TL-WN725N which *I think* uses the
-n180211 driver and needs a little messing around with to get working
+Setting up wifi. I am using the tp-link TL-WN725N which wpa_supplicant does not support with it's new drivers but does with the old *wext*, this requires a little bit of messing around to get working.
 
 First enable dhcpcd and create wpa\_supplicant config file and enable its service:
 ```
@@ -119,12 +120,12 @@ wpa_passphrase $SSID $PASSWORD > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 systemctl enable wpa_supplicant@wlan0
 ```
 
-Next, we have to change the systemd service script to use the old wext drivers for the nl80211
+Next, we have to change the systemd service script to try the old wext drivers if n180211 doesn't work
 ```
 vim /usr/lib/systemd/system/wpa_supplicant\@.service
 
 # Find the following line:
-ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-nl80211-%I.conf -i%I
+ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-%I.conf -i%I
 
 # And change it to
 ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-nl80211-%I.conf -Dnl80211 -i%I
