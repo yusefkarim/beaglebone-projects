@@ -1,0 +1,83 @@
+/dts-v1/;
+/plugin/;
+
+/{
+	compatible = "ti,beaglebone\0ti,beaglebone-black\0ti,beaglebone-green";
+	part-number = "MY-OVERLAY";
+	version = "0";
+	exclusive-use =
+            "P9.39",        // AIN0
+            "P9.40",        // AIN1
+            "P9.37",        // AIN2
+            "P9.38",        // AIN3
+            "P9.33",        // AIN4
+            "P9.36",        // AIN5
+            "P9.35",        // AIN6
+            "tscadc",       // Hardware ip used
+            "P9.14",        // EHRPWM1A
+            "P9.16";        // EHRPWM1B
+
+    /* ---------------------------- Analog Pins ---------------------------- */
+	fragment@0 {
+		target = <&tscadc>;
+		__overlay__ {
+			status = "okay";
+
+			adc {
+				ti,adc-channels = <0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07>;
+				ti,chan-step-avg = <0x10 0x10 0x10 0x10 0x10 0x10 0x10 0x10>;
+				ti,chan-step-opendelay = <0x98 0x98 0x98 0x98 0x98 0x98 0x98 0x98>;
+				ti,chan-step-sampledelay = <0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00>;
+			};
+		};
+	};
+
+    /* ---------------------------- EHRPWM1A/B ---------------------------- */
+    // Free up the pins used by the cape from the pinmux helpers.
+    fragment@1 {
+        target = <&ocp>;
+        __overlay__ {
+            P9_14_pinmux { status = "disabled"; }; /* (U14) gpmc_a2.ehrpwm1A */
+            P9_16_pinmux { status = "disabled"; }; /* (T14) gpmc_a3.ehrpwm1B */
+        };
+    };
+
+    fragment@2 {
+        target = <&am33xx_pinmux>;
+        __overlay__ {
+            bb_pwm1_pin: pinmux-pwm1-pin {
+                pinctrl-single,pins = <
+                    0x48 0x06  /* (U14) ehrpwm1A_mux1 */
+                    0x4c 0x06  /* (T14) ehrpwm1B_mux1 */
+                >;
+            };
+        };
+    };
+
+    fragment@3 {
+        target = <&ocp>;
+        __overlay__ {
+            bb_pwm1_test_helper: bb_pwm1_helper {
+                compatible = "bone-pinmux-helper";
+                pinctrl-names = "default";
+                pinctrl-0 = <&bb_pwm1_pin>;
+                status = "okay";
+            };
+        };
+    };
+
+    fragment@4 {
+        target = <&epwmss1>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+    fragment@5 {
+        target = <&ehrpwm1>;
+        __overlay__ {
+            status = "okay";
+        };
+    };
+
+};
