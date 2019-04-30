@@ -110,6 +110,10 @@ Update and install some packages
 pacman -Syu
 pacman -S base-devel vim git
 ```
+Change default runlevel for systemd to be non-graphical
+```
+systemctl set-default multi-user.target
+```
 
 Setting up wifi. I am using the tp-link TL-WN725N which wpa_supplicant does not support with it's new drivers but does with the old *wext*, this requires a little bit of messing around to get working.
 

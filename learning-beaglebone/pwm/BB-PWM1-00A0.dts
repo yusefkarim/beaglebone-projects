@@ -1,0 +1,90 @@
+/dts-v1/;
+
+/ {
+	compatible = "ti,beaglebone\0ti,beaglebone-black\0ti,beaglebone-green";
+	part-number = "BB-PWM1";
+	version = "00A0";
+
+	fragment@0 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+
+			P9_14_pinmux {
+				status = "disabled";
+			};
+
+			P9_16_pinmux {
+				status = "disabled";
+			};
+		};
+	};
+
+	fragment@1 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+
+			pinmux-pwm1-pin {
+				pinctrl-single,pins = <0x48 0x06 0x4c 0x06>;
+				phandle = <0x01>;
+			};
+		};
+	};
+
+	fragment@2 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+
+			bb_pwm1_helper {
+				compatible = "bone-pinmux-helper";
+				pinctrl-names = "default";
+				pinctrl-0 = <0x01>;
+				status = "okay";
+				phandle = <0x02>;
+			};
+		};
+	};
+
+	fragment@3 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@4 {
+		target = <0xffffffff>;
+
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	__symbols__ {
+		bb_pwm1_pin = "/fragment@1/__overlay__/pinmux-pwm1-pin";
+		bb_pwm1_test_helper = "/fragment@2/__overlay__/bb_pwm1_helper";
+	};
+
+	__fixups__ {
+		ocp = "/fragment@0:target:0\0/fragment@2:target:0";
+		am33xx_pinmux = "/fragment@1:target:0";
+		epwmss1 = "/fragment@3:target:0";
+		ehrpwm1 = "/fragment@4:target:0";
+	};
+
+	__local_fixups__ {
+
+		fragment@2 {
+
+			__overlay__ {
+
+				bb_pwm1_helper {
+					pinctrl-0 = <0x00>;
+				};
+			};
+		};
+	};
+};
