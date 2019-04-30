@@ -18,6 +18,8 @@ int main(int argc, char* argv[]) {
     PWMDutyCycle(pwm_number, 2350000);
     sleep(1);
     PWMDutyCycle(pwm_number, 1460000);
+    sleep(1);
+    PWMEnable(pwm_number, 0);
 
     PWMUnexport(pwm_number);
 
