@@ -124,7 +124,11 @@ wpa_passphrase $SSID $PASSWORD > /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 systemctl enable wpa_supplicant@wlan0
 ```
 
-Next, we have to change the systemd service script to try the old wext drivers if n180211 doesn't work
+Next, we have to change the systemd service script to try the old wext drivers if n180211 doesn't work:
+
+**WARNING:** If you update the wpa\_supplicant package this file will be
+overwritten and you won't have WIFI! You can make a bootup script to run the
+command shown below if you want to avoid this.
 ```
 vim /usr/lib/systemd/system/wpa_supplicant\@.service
 
@@ -132,5 +136,5 @@ vim /usr/lib/systemd/system/wpa_supplicant\@.service
 ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-%I.conf -i%I
 
 # And change it to
-ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-nl80211-%I.conf -Dnl80211 -i%I
+ExecStart=/usr/bin/wpa_supplicant -c/etc/wpa_supplicant/wpa_supplicant-%I.conf -Dnl80211,wext -i%I
 ```
