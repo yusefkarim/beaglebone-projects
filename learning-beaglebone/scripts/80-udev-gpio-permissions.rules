@@ -1,0 +1,1 @@
+KERNEL=="gpio*", SUBSYSTEM=="gpio", ACTION=="add", PROGRAM="/home/alarm/beaglebone-projects/learning-beaglebone/scripts/change_gpio_permissions.sh"
