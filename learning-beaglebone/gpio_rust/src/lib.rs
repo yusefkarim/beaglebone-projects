@@ -1,14 +1,13 @@
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
+use std::{thread, time};
 
 static GPIO_PATH: &str = "/sys/class/gpio/";
 
 enum Direction { INPUT, OUTPUT }
-#[derive(Debug)]
 enum Value { UNDEFINED = -1, LOW = 48, HIGH = 49 }
 
-#[derive(Debug)]
 pub struct InputPin {
     pin_num: u32,
     full_path: String,
@@ -17,7 +16,6 @@ pub struct InputPin {
     last_value: Value,
 }
 
-#[derive(Debug)]
 pub struct OutputPin {
     pin_num: u32,
     full_path: String,
@@ -40,15 +38,15 @@ trait GPIO {
 
     fn export(pin_num: u32, full_path: &str) {
         if !fs::metadata(&full_path).is_ok() {
-            println!("Full path does not exists");
             fs::write(GPIO_PATH.to_string() + "export", pin_num.to_string())
                 .expect("Could not open export file");
+            // If using udev rules, give some time for it to apply permissions
+            thread::sleep(time::Duration::from_secs(1));
         }
     }
 
     fn unexport(pin_num: u32, full_path: &str) {
         if fs::metadata(&full_path).is_ok() {
-            println!("Full path exists");
             fs::write(GPIO_PATH.to_string() + "unexport", pin_num.to_string())
                 .expect("Could not open unexport file");
         }
