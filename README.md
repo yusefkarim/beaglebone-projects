@@ -15,11 +15,10 @@
 - [ ] Learn various bus communications
     - I2C, SPI, UART
 - [ ] Learn to interface with DC motors and other physical components
-- [ ] Get very basic high performance GUI working (XFCE?)
-- [ ] Get some kind of audio output and input(for later on voice commands) working
-- [ ] Learn OpenCV using C++ to get some sort of machine vision working with a webcam
-- [ ] Learn more about DTOs
+- [x] Build Linux, U-boot and a basic rootfs from source
+- [x] Learn more about Device Tree Overlays
 - [ ] Write more advanced C programs to interface with GPIOs and Analog IO
+- [ ] Write a program that uses DMA (mmap /dev/mem) for high performance IO
 
 ### **Final Goal**:
 I want to use the Beaglebone for robotics projects in the future.
@@ -30,7 +29,3 @@ I want to use the Beaglebone for robotics projects in the future.
 
 - Beaglebone Cookbook - Mark Yoder & Jason Kridner
   
-    
- 
-Uploading directly from beaglebone
-
