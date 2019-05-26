@@ -19,11 +19,11 @@ mkdir bbb-linux && cd bbb-linux
 
 ## 1. Get a cross-compiler for your system (likely x86_64). There are several places you can get these pre-built for you,
 
-    1. < https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads>
+1. <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-a/downloads>
     
-    2. <https://archlinuxarm.org/wiki/Distcc_Cross-Compiling>
+2. <https://archlinuxarm.org/wiki/Distcc_Cross-Compiling>
     
-    3. <https://releases.linaro.org/components/toolchain/binaries/>
+3. <https://releases.linaro.org/components/toolchain/binaries/>
 
 I will be using the ones provided by the Arch Linux developers (2):
 ```
